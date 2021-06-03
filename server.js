@@ -1,7 +1,28 @@
 import mongoose from 'mongoose'
-const socketIo = require("socket.io")
 import express from 'express'
 import cors from 'cors'
+
+const socketIo = require("socket.io")
+const http = require("http"); // new
+const server = http.createServer(app); // new
+
+/* const http = require('http').createServer(app)
+const socketIo = require('socket.io')(http) */
+
+
+
+const port = process.env.PORT || 4001
+const app = express()
+
+/* const index = require("./routes/index");
+app.use(index);
+ */
+const io = socketIo(server, {
+  cors: {
+    origin: "*", 
+    methods: ["GET, POST"]
+  }
+})
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
@@ -27,8 +48,7 @@ const urlSchema = new mongoose.Schema({
 
 const Sound = mongoose.model('Sound', urlSchema)
 
-const port = process.env.PORT || 4001
-const app = express()
+
 
 // Add middlewares to enable cors and json body parsing
 app.use(cors())
@@ -58,6 +78,12 @@ app.post('/sounds', async (req,res) => {
     }
     res.status(400).json(error)
   }
+})
+
+io.on("connection", (socket) => {
+  console.log('I am connected')
+  const response = "https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3"                       
+  socket.emit("FromAPI", response);
 })
 
 // Start the server
