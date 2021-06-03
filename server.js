@@ -40,13 +40,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/sounds', async (req,res) => {
-  const allSounds = await urlSchema.find()
+  const allSounds = await Sound.find()
   res.json(allSounds)
 });
 
 app.post('/sounds', async (req,res) => {
   try {
-    const newSound = await new urlSchema({
+    const newSound = await new Sound({
       name: req.body.name,
       url: req.body.url,
       description: req.body.description
