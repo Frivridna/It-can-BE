@@ -4,7 +4,10 @@ Mongoose - npm i mongoose
 npm install @babel/helper-compilation-targets --save-dev
 npm update / npm update --legacy-peer-deps
 
-npm i express-list-endpoints
+
+npm i express-list-endpoints - Fethullah installera på din
+npm i bcrypt - Fethullah installera på din
+npm i crypto-js - Fethullah installera på din
 ## Sockets
 npm i socket.io for BE npm i socket.io-client (Client version of the library) for FE
 
