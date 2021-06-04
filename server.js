@@ -19,6 +19,14 @@ const io = new Server(server, {
   }
 })
 
+io.on("connection", (socket) => {
+  console.log('I am connected')
+  socket.on('click', (click) => {
+    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
+    console.log('We have a click');
+  });
+})
+
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
 mongoose.Promise = Promise
@@ -183,14 +191,6 @@ app.put('/sounds/:id', async (req, res) => {
   } catch(error) {
     res.status(400).json({ message: 'Invalid request', error })
   }
-})
-
-io.on("connection", (socket) => {
-  console.log('I am connected')
-  socket.on('click', (click) => {
-    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
-    console.log('We have a click');
-  });
 })
 
 // Start the server
