@@ -19,7 +19,7 @@ const io = new Server(server, {
     methods: ["GET, POST"]
   }
 })
-
+/*
 const socket = io();
 const nsps = io.of('/');
 //const mainAdapter = io.of("/").adapter // behövs den här? 
@@ -34,17 +34,17 @@ io.on('connection', (socket) => {
    //Send this event to everyone in the room.
   io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
   console.log('We have a click');
-  })
+  })*/
 
 
 
-/*io.on("connection", (socket) => {
+io.on("connection", (socket) => {
   console.log('I am connected')
   socket.on('click', (click) => {
     io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
     console.log('We have a click');
   });
-})*/
+})
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
