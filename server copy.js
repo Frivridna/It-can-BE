@@ -1,15 +1,23 @@
 import mongoose from 'mongoose'
 import express from 'express'
 import cors from 'cors'
-import listEndpoints from 'express-list-endpoints'
 
-const http = require("http");
-const app = express()
-const server = http.createServer(app);
-const { Server } = require("socket.io");
+const socketIo = require("socket.io")
+const http = require("http"); // new
+const server = http.createServer(app); // new
+
+/* const http = require('http').createServer(app)
+const socketIo = require('socket.io')(http) */
+
+
+
 const port = process.env.PORT || 4001
+const app = express()
 
-const io = new Server(server, {
+/* const index = require("./routes/index");
+app.use(index);
+ */
+const io = socketIo(server, {
   cors: {
     origin: "*", 
     methods: ["GET, POST"]
@@ -48,7 +56,7 @@ app.use(express.json())
 
 // Start defining your routes here
 app.get('/', (req, res) => {
-  res.send(listEndpoints(app))
+  res.send('Hello world')
 })
 
 app.get('/sounds', async (req,res) => {
@@ -74,13 +82,11 @@ app.post('/sounds', async (req,res) => {
 
 io.on("connection", (socket) => {
   console.log('I am connected')
-  socket.on('click', (click) => {
-    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
-    console.log('We have a click');
-  });
+  const response = "https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3"                       
+  socket.emit("FromAPI", response);
 })
 
 // Start the server
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`)
 })
