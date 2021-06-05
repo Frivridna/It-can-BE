@@ -19,22 +19,23 @@ const io = new Server(server, {
     methods: ["GET, POST"]
   }
 })
-/*
-const socket = io();
-const nsps = io.of('/');
-//const mainAdapter = io.of("/").adapter // behövs den här? 
-const roomno = 1;
+
+// const socket = io();
+// const nsps = io.of('/');
+// //const mainAdapter = io.of("/").adapter // behövs den här? 
+// const roomno = 1;
 io.on('connection', (socket) => {
   console.log('I am connected')
   console.log(socket.id)
+ // console.log(io.of('/').sockets)
+  console.log(io.sockets)
    //Increase roomno 2 clients are present in a room.
-  if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
+/*   if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
   socket.join("room-"+roomno);
-    console.log(roomno)
+  console.log(roomno)
    //Send this event to everyone in the room.
-  io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
-  console.log('We have a click');
-  })*/
+  io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3'); */
+  })
 
 
 
