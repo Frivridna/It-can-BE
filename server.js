@@ -5,11 +5,10 @@ import listEndpoints from 'express-list-endpoints'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
-const http = require("http");
+const http = require("http")
 const app = express()
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const socketIO = require("socket.io") // new since friday
+const server = http.createServer(app)
+const { Server } = require("socket.io")
 
 const port = process.env.PORT || 4001
 
@@ -24,28 +23,60 @@ const io = new Server(server, {
 // const nsps = io.of('/');
 // //const mainAdapter = io.of("/").adapter // behövs den här? 
 // const roomno = 1;
-io.on('connection', (socket) => {
-  console.log('I am connected')
-  console.log(socket.id)
- // console.log(io.of('/').sockets)
-  console.log(io.sockets)
+
+
+// io.on('connection', (socket) => {
+//   console.log('I am connected')
+//   console.log(socket.id)
+//  // console.log(io.of('/').sockets)
+//   console.log(io.sockets)
+
+
    //Increase roomno 2 clients are present in a room.
 /*   if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
   socket.join("room-"+roomno);
   console.log(roomno)
    //Send this event to everyone in the room.
   io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3'); */
-  })
+//   })
 
 
 
+  io.on("connection", (socket) => {
+   console.log('I am connected')
+   socket.on('click', (click) => {
+     io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
+     console.log('We have a click');
+   });
+ })
+
+// ROOM SECTION
 io.on("connection", (socket) => {
-  console.log('I am connected')
-  socket.on('click', (click) => {
-    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
-    console.log('We have a click');
+  socket.on("big-poppa", (arg, room) => {
+    if(room!=="") { //if(arg2 === "Turtles")
+      return(
+        io.on("connection", (socket) => {
+          console.log('I am connected')
+          socket.on('click', (click) => {
+            io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
+            console.log('We have a click');
+          });
+        })
+      )
+    } else {
+      return(
+        console.log(arg)
+      )
+    }
   });
-})
+  socket.on ('join-room', room => {
+    console.log(room)
+    socket.join(room)
+  })
+  // Här placeholder
+});
+
+
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
@@ -217,7 +248,3 @@ app.put('/sounds/:id', async (req, res) => {
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`)
 })
-
-// http.listen(3000, function() {
-//  console.log('listening on localhost:3000');
-//});
