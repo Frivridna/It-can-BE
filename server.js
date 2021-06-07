@@ -42,20 +42,34 @@ io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethul
 //   })
 
 // say that if socket id aka users > 2 --> Create a new room
-//  const roomno = 1
+//  let roomno = 1
+  let currentroom = 1 // just a counter :) 
+  const completeRooms = [] // ---> bygg om den här för att hålla reda på alla rum samt evt. hur många som är i detta rum. 
   io.on("connection", (socket) => {
   console.log('I am connected')
   //console.log(io.of('/').sockets)
 /*   if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
   socket.join("room-" +roomno) */
-   
+
+  let room = "room"+currentroom
+  let newRoom = "room"+(currentroom+1)
+
   socket.on('create', (newRoom) => {
+    if (io.sockets.adapter.rooms.get(room) || io.sockets.adapter.rooms.get(room).size >= 2) {
+      currentroom++;
+      socket.join(newRoom)
+      console.log("Created new room "+ newRoom +".")
+    } else {
+      socket.join(room)
+      completeRooms.push(room)
+      console.log("Pushed "+ room +" to complete rooms.")
+    }
     //socket.rooms.size = 2 
     //io.sockets.adapter.rooms.get(roomName).size // Code to check how many users is in one room. 
 
     //console.log(io.sockets.adapter.rooms) // list all rooms aka all open browsers 
 
-    const rooms = []
+
     // io.sockets.rooms
     //console.log(io.sockets.rooms)
     
@@ -65,20 +79,21 @@ io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethul
 /*     let amountOfUser = newRoom++
     console.log(amountOfUser) */
 
-    const users = function (roomno) {
+/*     const users = function (roomno) {
         return socket.rooms[roomno]
-     }
+     } */
+
     //if any of the current rooms have only one
     //user, join that room. 
-      rooms.forEach(room => {
+/*       rooms.forEach(room => {
       console.log(room.length)
       if (users(room).length === 1) {
         socket.join(room)
       } else {
       socket.join(newRoom)
-      }
+      } */
     })
-  })
+//  })
   socket.on('click', (click) => {
     io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
     console.log('We have a click')
