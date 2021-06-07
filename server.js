@@ -48,6 +48,8 @@ const completeRooms = [] // ---> bygg om den här för att hålla reda på alla 
 
 io.on("connection", (socket) => {
   console.log('I am connected')
+  socket.join("global")
+  console.log("Number of users in room global: "+io.sockets.adapter.rooms.get("global").size)
   //console.log(io.of('/').sockets)
 /*   if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
   socket.join("room-" +roomno) */
@@ -55,7 +57,7 @@ io.on("connection", (socket) => {
   let room = "room"+currentroom
   let newRoom = "room"+(currentroom+1)
 
-  socket.on('create', (newRoom) => {
+  socket.on('create', () => {
     if (io.sockets.adapter.rooms.get(room) || io.sockets.adapter.rooms.get(room).size >= 2) {
       currentroom++;
       socket.join(newRoom)
