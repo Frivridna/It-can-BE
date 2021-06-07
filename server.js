@@ -42,42 +42,47 @@ io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethul
 //   })
 
 // say that if socket id aka users > 2 --> Create a new room
-// const roomno = 1
+//  const roomno = 1
   io.on("connection", (socket) => {
   console.log('I am connected')
   //console.log(io.of('/').sockets)
-/*  if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
+/*   if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
   socket.join("room-" +roomno) */
    
   socket.on('create', (newRoom) => {
-    socket.rooms.size === 2 
+    //socket.rooms.size = 2 
+    //io.sockets.adapter.rooms.get(roomName).size // Code to check how many users is in one room. 
+
+    //console.log(io.sockets.adapter.rooms) // list all rooms aka all open browsers 
+
     const rooms = []
     // io.sockets.rooms
     //console.log(io.sockets.rooms)
-    const roomno = 1
-    console.log(newRoom)
     
-    let amountOfUser = newRoom++
-    console.log(amountOfUser)
+    //const roomno = 1
+    //console.log(newRoom)
+  
+/*     let amountOfUser = newRoom++
+    console.log(amountOfUser) */
 
     const users = function (roomno) {
         return socket.rooms[roomno]
      }
     //if any of the current rooms have only one
     //user, join that room. 
-/*     socket.rooms.forEach(room => {
+      rooms.forEach(room => {
       console.log(room.length)
       if (users(room).length === 1) {
         socket.join(room)
       } else {
       socket.join(newRoom)
       }
-    }) */
-   })
-    socket.on('click', (click) => {
-     io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-     console.log('We have a click')
-   })
+    })
+  })
+  socket.on('click', (click) => {
+    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+    console.log('We have a click')
+  })
 })
 
 // ROOM SECTION
