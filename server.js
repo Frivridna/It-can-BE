@@ -43,9 +43,10 @@ io.sockets.in("room-"+roomno).emit('FromAPI', 'https://testfiles-caroline-fethul
 
 // say that if socket id aka users > 2 --> Create a new room
 //  let roomno = 1
-  let currentroom = 1 // just a counter :) 
-  const completeRooms = [] // ---> bygg om den här för att hålla reda på alla rum samt evt. hur många som är i detta rum. 
-  io.on("connection", (socket) => {
+let currentroom = 1 // just a counter :) 
+const completeRooms = [] // ---> bygg om den här för att hålla reda på alla rum samt evt. hur många som är i detta rum. 
+
+io.on("connection", (socket) => {
   console.log('I am connected')
   //console.log(io.of('/').sockets)
 /*   if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
