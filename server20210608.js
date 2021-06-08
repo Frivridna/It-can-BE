@@ -19,6 +19,44 @@ const io = new Server(server, {
   }
 })
 
+// console.log(socket.id)
+// console.log(io.of('/').sockets)
+//socket.rooms.size 
+//console.log(io.sockets.adapter.rooms) // list all rooms aka all open browsers 
+
+let currentroom = 1 // just a counter :) 
+const completeRooms = [] // ---> bygg om den här för att hålla reda på alla rum samt evt. hur många som är i detta rum. 
+
+// ROOM SECTION
+io.on("connection", (socket) => {
+  console.log('I am connected 1')
+  socket.join("global")
+  console.log("Number of users in room global: "+io.sockets.adapter.rooms.get("global").size)
+  //   console.log(io.sockets)
+
+  let room = "room"+currentroom
+  let newRoom = "room"+(currentroom+1)
+
+  socket.on('create', () => {
+    socket.join(room)
+    if (io.sockets.adapter.rooms.get(room) || io.sockets.adapter.rooms.get(room).size >= 2) {
+      currentroom++
+      console.log("Created new room "+ newRoom +".")
+      console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
+    } else {
+      socket.join(room)
+      completeRooms.push(room)
+      console.log("Pushed "+ room +" to complete rooms.")
+      console.log(completeRooms)
+    }
+  })
+
+/*   socket.on('click', (click) => {
+    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+    console.log('We have a click 1')
+  }) */
+
+  // GENERATE RANDOM CODE TO USER A:
 const setSecretCode = (length) => {
   const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
@@ -28,18 +66,24 @@ const setSecretCode = (length) => {
   return result
 }
 
+console.log(setSecretCode(4)) // run this function when user clicked "Create Room"
 
-io.on("connection", (socket) => {
-  console.log("I am connected"); // x8WIv7-mJelg7on_ALbx
-
-  socket.on('create', () => {
-    socket.join(room)
-    setSecretCode(4)
+  socket.on("big-poppa", (arg, room) => {
+    if(room!=="") { 
+          socket.on('click', (click) => {
+            io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
+            console.log('We have a click 2');
+          });
+    } else {
+        console.log(arg)
+    }
   })
-
-});
-
-
+})
+// ROOM SECTION ENDS
+/*   socket.on ('join-room', room => {
+    console.log(room)
+    socket.join(room)
+  }) */
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
