@@ -47,9 +47,9 @@ let currentroom = 1 // just a counter :)
 const completeRooms = [] // ---> bygg om den här för att hålla reda på alla rum samt evt. hur många som är i detta rum. 
 
 io.on("connection", (socket) => {
-  console.log('I am connected')
-  socket.join("global")
-  console.log("Number of users in room global: "+io.sockets.adapter.rooms.get("global").size)
+  console.log('I am connected 1')
+//  socket.join("global")
+//  console.log("Number of users in room global: "+io.sockets.adapter.rooms.get("global").size)
   //console.log(io.of('/').sockets)
 /*   if(io.rooms[`${"room-" +roomno}`] && io.rooms[`${"room-" +roomno}`].length > 1) roomno++
   socket.join("room-" +roomno) */
@@ -58,14 +58,15 @@ io.on("connection", (socket) => {
   let newRoom = "room"+(currentroom+1)
 
   socket.on('create', () => {
+    socket.join(room)
     if (io.sockets.adapter.rooms.get(room) || io.sockets.adapter.rooms.get(room).size >= 2) {
-      currentroom++;
-      socket.join(newRoom)
+      currentroom++
       console.log("Created new room "+ newRoom +".")
     } else {
       socket.join(room)
       completeRooms.push(room)
       console.log("Pushed "+ room +" to complete rooms.")
+      console.log(completeRooms)
     }
     //socket.rooms.size = 2 
     //io.sockets.adapter.rooms.get(roomName).size // Code to check how many users is in one room. 
@@ -105,17 +106,18 @@ io.on("connection", (socket) => {
 
 // ROOM SECTION
 io.on("connection", (socket) => {
+  console.log('I am connected 2')
   socket.on("big-poppa", (arg, room) => {
     if(room!=="") { //if(arg2 === "Turtles")
-      return(
-        io.on("connection", (socket) => {
-          console.log('I am connected')
+//      return(
+//        io.on("connection", (socket) => {
+//          console.log('I am connected 3')
           socket.on('click', (click) => {
             io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
             console.log('We have a click');
           });
-        })
-      )
+//        })
+//      )
     } else {
       return(
         console.log(arg)
