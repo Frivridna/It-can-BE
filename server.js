@@ -46,26 +46,22 @@ io.on("connection", (socket) => {
     socket.join(userBInput)
     console.log("This is second user joining", io.sockets.adapter.rooms.get(userBInput).size)
 
+    // CHANGE THIS: 
+    // 1) Plocka ut socket.id - HUR gör vi det?
+    // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
     if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
       console.log("Amount of users in room ", io.sockets.adapter.rooms.get(userBInput).size)
-      ///// CHANGE THIS TO EMIT TO THE RIGHT ROOM ** ** socket syntax ** 
-      io.emit('status:', 'The room is currently occupied') // lägg in i FE  
-      //console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
+      io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
       } else { // join-room
         console.log('There are rooms still there to join for 1 user')
-        // io.emit någonting här? :) 
+        // What to do instead of console.log here? 
       }
-    // Do we need something here? 
-    //const currentRoom = io.sockets.on('some super awesome room');
-  //  console.log("Our current room: ", currentRoom)
   })
   socket.on('click', (click) => {
     // // io.to('some room').emit('some event')
     //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
     console.log('We have a click 1')
   })
-
-
 })
 
 
