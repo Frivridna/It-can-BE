@@ -19,6 +19,7 @@ const io = new Server(server, {
   }
 })
 
+// generateRoomId ? detta är inte secret - ingen kryptering t.ex. enligt en som jobbar med internetsäkerhet. Se över terminologin. 
 const setSecretCode = (length) => {
   const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
@@ -32,60 +33,38 @@ const setSecretCode = (length) => {
 io.on("connection", (socket) => {
   console.log("I am connected", socket.id)
 
+  socket.on('create', () => {
+    console.log('room created')
+    let secretCode = setSecretCode(4)
+
+    io.emit('sendCode', secretCode)
+    socket.join(secretCode)
+  })
   // User B input 
-   socket.on('join-room', (userBInput) => {
+  socket.on('join-room', (userBInput) => {
     console.log(userBInput)
+    socket.join(userBInput)
+    console.log("This is second user joining", io.sockets.adapter.rooms.get(userBInput).size)
+
+    if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
+      console.log("Amount of users in room ", io.sockets.adapter.rooms.get(userBInput).size)
+      ///// CHANGE THIS TO EMIT TO THE RIGHT ROOM ** ** socket syntax ** 
+      io.emit('status:', 'The room is currently occupied') // lägg in i FE  
+      //console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
+      } else { // join-room
+        console.log('There are rooms still there to join for 1 user')
+        // io.emit någonting här? :) 
+      }
     // Do we need something here? 
     //const currentRoom = io.sockets.on('some super awesome room');
   //  console.log("Our current room: ", currentRoom)
   })
-
-   socket.on('code', (input) => {
-    //console.log(input)
-    //socket.join(room)
-    
-    
-
-    let secretCode = setSecretCode(4)
-    
-    if (input !== '') {
-      console.log("Triggered")
-      io.emit('sendCode', secretCode)
-      // io.sockets.adapter.rooms.get(room) || 
-      
-      let currentroom = 1 
-      let room = "room"+currentroom
-      let newRoom = "room"+(currentroom+1)
-
-      socket.on('create', (room) => {
-        
-        console.log('room created')
-        
-        socket.join(room)
-        //console.log("size: ",io.sockets.adapter.rooms.get(room).size )
-        if (io.sockets.adapter.rooms.get(room).size >= 2) {
-          console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
-          socket.on('click', (click) => {
-            // // io.to('some room').emit('some event')
-            //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-            console.log('We have a click 1')
-          })
-          currentroom++
-          console.log("Created new room "+ newRoom +".")
-          //console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
-          } else { // join-room
-            console.log('There are rooms still there to join for 1 user')
-          }
-      })
-
-    } else {
-      console.log('Not triggered')
-    }
-    /*socket.on('join-room', (room) => {
-      console.log(room)
-      
-    })*/
+  socket.on('click', (click) => {
+    // // io.to('some room').emit('some event')
+    //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+    console.log('We have a click 1')
   })
+
 
 })
 
