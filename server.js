@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
     console.log(userBInput)
     // Do we need something here? 
     //const currentRoom = io.sockets.on('some super awesome room');
-    console.log("Our current room: ", currentRoom)
+  //  console.log("Our current room: ", currentRoom)
   })
 
    socket.on('code', (input) => {
@@ -58,12 +58,10 @@ io.on("connection", (socket) => {
       let newRoom = "room"+(currentroom+1)
 
       socket.on('create', (room) => {
-        /*room.on("join", () => {
-          console.log("someone joined the room")
-        })*/
+        
         console.log('room created')
         
-        socket.join('join-room', room)
+        socket.join(room)
         //console.log("size: ",io.sockets.adapter.rooms.get(room).size )
         if (io.sockets.adapter.rooms.get(room).size >= 2) {
           console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
