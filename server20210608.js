@@ -71,9 +71,10 @@ console.log(setSecretCode(4)) // run this function when user clicked "Create Roo
   socket.on("big-poppa", (arg, room) => {
     if(room!=="") { 
           socket.on('click', (click) => {
-            io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3');
-            console.log('We have a click 2');
-          });
+            // io.to('some room').emit('some event')
+            io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+            console.log('We have a click 2')
+          })
     } else {
         console.log(arg)
     }

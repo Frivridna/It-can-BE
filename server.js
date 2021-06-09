@@ -30,14 +30,66 @@ const setSecretCode = (length) => {
 
 
 io.on("connection", (socket) => {
-  console.log("I am connected"); // x8WIv7-mJelg7on_ALbx
+  console.log("I am connected", socket.id)
 
-  socket.on('create', () => {
-    socket.join(room)
-    setSecretCode(4)
+  // User B input 
+   socket.on('join-room', (userBInput) => {
+    console.log(userBInput)
+    // Do we need something here? 
+    //const currentRoom = io.sockets.on('some super awesome room');
+    console.log("Our current room: ", currentRoom)
   })
 
-});
+   socket.on('code', (input) => {
+    //console.log(input)
+    //socket.join(room)
+    
+    
+
+    let secretCode = setSecretCode(4)
+    
+    if (input !== '') {
+      console.log("Triggered")
+      io.emit('sendCode', secretCode)
+      // io.sockets.adapter.rooms.get(room) || 
+      
+      let currentroom = 1 
+      let room = "room"+currentroom
+      let newRoom = "room"+(currentroom+1)
+
+      socket.on('create', (room) => {
+        /*room.on("join", () => {
+          console.log("someone joined the room")
+        })*/
+        console.log('room created')
+        
+        socket.join('join-room', room)
+        //console.log("size: ",io.sockets.adapter.rooms.get(room).size )
+        if (io.sockets.adapter.rooms.get(room).size >= 2) {
+          console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
+          socket.on('click', (click) => {
+            // // io.to('some room').emit('some event')
+            //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+            console.log('We have a click 1')
+          })
+          currentroom++
+          console.log("Created new room "+ newRoom +".")
+          //console.log("Amount of users in room ", io.sockets.adapter.rooms.get(room).size )
+          } else { // join-room
+            console.log('There are rooms still there to join for 1 user')
+          }
+      })
+
+    } else {
+      console.log('Not triggered')
+    }
+    /*socket.on('join-room', (room) => {
+      console.log(room)
+      
+    })*/
+  })
+
+})
 
 
 
