@@ -36,21 +36,35 @@ io.on("connection", (socket) => {
   socket.on('create', () => {
     console.log('room created')
     let secretCode = setSecretCode(4)
-
-    io.emit('sendCode', secretCode)
+    let role = 'Role A'
+    io.emit('sendCode', secretCode, role)
     socket.join(secretCode)
+    socket.on('userA', (arg => {
+      console.log(arg)
+      console.log(role===arg)
+    }))
   })
   // User B input 
   socket.on('join-room', (userBInput) => {
     console.log(userBInput)
+    let role = 'Role B'
     socket.join(userBInput)
     console.log("This is second user joining", io.sockets.adapter.rooms.get(userBInput).size)
+    socket.on('userB', (arg => {
+      console.log(arg)
+      console.log(role===arg)
+    }))
 
     // CHANGE THIS: 
     // 1) Plocka ut socket.id - HUR gör vi det?
     // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
     if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
-      console.log("Amount of users in room ", io.sockets.adapter.rooms.get(userBInput).size)
+
+      let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
+      // hämta ut rätt socket.id till användare nummer >=2
+      //io.to(socketId).emit('status', amountOfPerson) 
+      
+      console.log(`Amount of users in room ${userBInput}`, io.sockets.adapter.rooms.get(userBInput).size)
       io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
       } else { // join-room
         console.log('There are rooms still there to join for 1 user')
@@ -58,11 +72,14 @@ io.on("connection", (socket) => {
       }
   })
   socket.on('click', (click) => {
-    // // io.to('some room').emit('some event')
+    // io.to('some room').emit('some event')
     //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
     console.log('We have a click 1')
   })
 })
+
+// second file
+// https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3
 
 
 
