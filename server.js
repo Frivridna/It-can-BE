@@ -29,6 +29,10 @@ const setSecretCode = (length) => {
   return result
 }
 
+let roleA = 'Role A'
+let roleB = 'Role B'
+let userRoleA
+let userRoleB
 
 io.on("connection", (socket) => {
   console.log("I am connected", socket.id)
@@ -36,23 +40,25 @@ io.on("connection", (socket) => {
   socket.on('create', () => {
     console.log('room created')
     let secretCode = setSecretCode(4)
-    let role = 'Role A'
-    io.emit('sendCode', secretCode, role)
+    let roleA = 'Role A'
+    io.emit('sendCode', secretCode, roleA)
     socket.join(secretCode)
+    console.log("This is first user joining", io.sockets.adapter.rooms.get(secretCode).size)
     socket.on('userA', (arg => {
-      console.log(arg)
-      console.log(role===arg)
+      userRoleA=arg
+      console.log(roleA===userRoleA)
     }))
   })
   // User B input 
   socket.on('join-room', (userBInput) => {
     console.log(userBInput)
-    let role = 'Role B'
+    //let roleB = 'Role B'
     socket.join(userBInput)
     console.log("This is second user joining", io.sockets.adapter.rooms.get(userBInput).size)
     socket.on('userB', (arg => {
-      console.log(arg)
-      console.log(role===arg)
+      userRoleB = arg
+      console.log(userRoleB)
+      console.log(roleB===userRoleB)
     }))
 
     // CHANGE THIS: 
@@ -62,7 +68,7 @@ io.on("connection", (socket) => {
 
       let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
       // hämta ut rätt socket.id till användare nummer >=2
-      //io.to(socketId).emit('status', amountOfPerson) 
+      //io.to(socketId).emit('status', "hej hej it's already ${amountOfPerson} persons in the room, please try again") 
       
       console.log(`Amount of users in room ${userBInput}`, io.sockets.adapter.rooms.get(userBInput).size)
       io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
@@ -70,7 +76,17 @@ io.on("connection", (socket) => {
         console.log('There are rooms still there to join for 1 user')
         // What to do instead of console.log here? 
       }
-  })
+  })   
+  
+  // Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
+  if (roleA === userRoleA) {
+    console.log('User A')
+    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+  } else if (roleB === userRoleB) {
+    console.log('User B')
+    io.emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+  }
+
   socket.on('click', (click) => {
     // io.to('some room').emit('some event')
     //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
