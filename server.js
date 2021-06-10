@@ -33,11 +33,13 @@ let roleA = 'Role A'
 let roleB = 'Role B'
 let userRoleA
 let userRoleB
+let secret
 
 io.on("connection", (socket) => {
   console.log("I am connected", socket.id)
 
   socket.on('create', () => {
+    console.log("This is user A id", socket.id)
     console.log('room created')
     let secretCode = setSecretCode(4)
     let roleA = 'Role A'
@@ -47,10 +49,12 @@ io.on("connection", (socket) => {
     socket.on('userA', (arg => {
       userRoleA=arg
       console.log(roleA===userRoleA)
+   
     }))
   })
   // User B input 
   socket.on('join-room', (userBInput) => {
+    console.log("This is user B id", socket.id)
     console.log(userBInput)
     //let roleB = 'Role B'
     socket.join(userBInput)
@@ -65,6 +69,15 @@ io.on("connection", (socket) => {
     // 1) Plocka ut socket.id - HUR gör vi det?
     // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
     if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
+      // Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
+      if (roleA === userRoleA) {
+        console.log('User A')
+        // io.to(socketId).emit(/* ... */);
+        socket.to(socket.id).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+      } else if (roleB === userRoleB) {
+        console.log('User B')
+        socket.to(userBInput).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+      }
 
       let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
       // hämta ut rätt socket.id till användare nummer >=2
@@ -77,16 +90,6 @@ io.on("connection", (socket) => {
         // What to do instead of console.log here? 
       }
   })   
-  
-  // Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
-  if (roleA === userRoleA) {
-    console.log('User A')
-    io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-  } else if (roleB === userRoleB) {
-    console.log('User B')
-    io.emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
-  }
-
   socket.on('click', (click) => {
     // io.to('some room').emit('some event')
     //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
