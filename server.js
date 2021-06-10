@@ -69,10 +69,11 @@ io.on("connection", (socket) => {
     // 1) Plocka ut socket.id - HUR gör vi det?
     // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
     if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
-      // Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
+      // OLDER: Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
       if (roleA === userRoleA) {
         console.log('User A')
-        // io.to(socketId).emit(/* ... */);
+        // io.to(socketId).emit(/* ... */) ---> emit to specific user syntax. 
+        // socket.to("room1").emit(/* ... */) ---> emit to room syntax. 
         socket.to(socket.id).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
       } else if (roleB === userRoleB) {
         console.log('User B')
