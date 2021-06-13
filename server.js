@@ -33,13 +33,16 @@ let roleA = 'Role A'
 let roleB = 'Role B'
 let userRoleA
 let userRoleB
+let userAId
+let userBId
 let secret
 
 io.on("connection", (socket) => {
   console.log("I am connected", socket.id)
 
   socket.on('create', () => {
-    console.log("This is user A id", socket.id)
+    // old code
+/*     console.log("This is user A id", socket.id)
     console.log('room created')
     let secretCode = setSecretCode(4)
     let roleA = 'Role A'
@@ -49,10 +52,36 @@ io.on("connection", (socket) => {
     socket.on('userA', (arg => {
       userRoleA=arg
       console.log(roleA===userRoleA)
-   
+  
     }))
+
+ */    // new code
+    let secretCode = setSecretCode(4)
+    socket.join(secretCode)
+    console.log('room created')
+    io.emit('sendCode', secretCode)
+    let userAId = socket.id
   })
   // User B input 
+  socket.on('join-room', (roomId) => {
+    console.log('User B joined: ', socket.id)
+    socket.join(roomId)
+    if (io.sockets.adapter.rooms.get(roomId).size < 2) {
+      let userAId = socket.Id
+    } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
+      let userBId = socket.id
+      // start session
+      socket.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+        console.log('Sending URL to user A')
+        console.log('Sending URL to user B')
+      socket.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+      io.emit('FromAPI','Foo')
+    } else {
+      // room is full --> emit to global room that this room is already full.
+    }
+  })
+
+/* 
   socket.on('join-room', (userBInput) => {
     console.log("This is user B id", socket.id)
     console.log(userBInput)
@@ -64,33 +93,35 @@ io.on("connection", (socket) => {
       console.log(userRoleB)
       console.log(roleB===userRoleB)
     }))
-
+ */
     // CHANGE THIS: 
     // 1) Plocka ut socket.id - HUR gör vi det?
     // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
-    if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
-      // OLDER: Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
-      if (roleA === userRoleA) {
-        console.log('User A')
-        // io.to(socketId).emit(/* ... */) ---> emit to specific user syntax. 
-        // socket.to("room1").emit(/* ... */) ---> emit to room syntax. 
-        socket.to(socket.id).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-      } else if (roleB === userRoleB) {
-        console.log('User B')
-        socket.to(userBInput).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
-      }
+    // if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
+    //   // OLDER: Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
+    //   if (roleA === userRoleA) {
+    //     console.log('User A')
+    //     // io.to(socketId).emit(/* ... */) ---> emit to specific user syntax. 
+    //     // socket.to("room1").emit(/* ... */) ---> emit to room syntax. 
+    //     socket.to(socket.id).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+    //     console.log('Sending URL to user A')
+    //   } else if (roleB === userRoleB) {
+    //     console.log('Sending URL to user B')
+    //     socket.to(userBInput).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+    //   }
 
-      let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
+    // SPARA DENNA LINE:  let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
+
       // hämta ut rätt socket.id till användare nummer >=2
       //io.to(socketId).emit('status', "hej hej it's already ${amountOfPerson} persons in the room, please try again") 
       
-      console.log(`Amount of users in room ${userBInput}`, io.sockets.adapter.rooms.get(userBInput).size)
-      io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
-      } else { // join-room
-        console.log('There are rooms still there to join for 1 user')
-        // What to do instead of console.log here? 
-      }
-  })   
+      // console.log(`Amount of users in room ${roomId}`, io.sockets.adapter.rooms.get(roomId).size)
+      // io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
+      // } else { // join-room
+      //   console.log('There are rooms still there to join for 1 user')
+      //   // What to do instead of console.log here? 
+      // }
+  //})   
   socket.on('click', (click) => {
     // io.to('some room').emit('some event')
     //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
