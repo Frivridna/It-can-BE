@@ -75,6 +75,7 @@ io.on("connection", (socket) => {
         console.log('Sending URL to user A')
         console.log('Sending URL to user B')
       socket.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+      // emit to all connected users --> io.emit()
       io.emit('FromAPI','Foo')
     } else {
       // room is full --> emit to global room that this room is already full.
