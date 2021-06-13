@@ -29,10 +29,10 @@ const setSecretCode = (length) => {
   return result
 }
 
-let roleA = 'Role A'
-let roleB = 'Role B'
-let userRoleA
-let userRoleB
+// let roleA = 'Role A'
+// let roleB = 'Role B'
+// let userRoleA
+// let userRoleB
 let userAId
 let userBId
 let secret
@@ -57,32 +57,36 @@ io.on("connection", (socket) => {
 
  */    // new code
     let secretCode = setSecretCode(4)
+    io.emit('sendCode', secretCode)
+    userAId = socket.id
+    console.log("User A joined with id", socket.id)
     socket.join(secretCode)
     console.log('room created')
-    io.emit('sendCode', secretCode)
-    let userAId = socket.id
   })
   // User B input 
   socket.on('join-room', (roomId) => {
-    console.log('User B joined: ', socket.id)
+    console.log(`User A id is still here? ${userAId}`)
+    console.log('User B joined with id: ', socket.id)
     socket.join(roomId)
     if (io.sockets.adapter.rooms.get(roomId).size < 2) {
-      let userAId = socket.Id
+      userAId = socket.id
     } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
+      console.log("Amount of Users in room right now", io.sockets.adapter.rooms.get(roomId).size)
       let userBId = socket.id
       // start session
       socket.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-        console.log('Sending URL to user A')
-        console.log('Sending URL to user B')
+        console.log(`Sending URL to user A: ${userAId}`)
+        console.log(`Sending URL to user B: ${userBId}`)
       socket.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
       // emit to all connected users --> io.emit()
-      io.emit('FromAPI','Foo')
+    //  io.emit('FromAPI','Foo')
+    //socket.to(userBId).emit('FromSecondAPI', 'hej hej')
     } else {
       // room is full --> emit to global room that this room is already full.
     }
   })
 
-/* 
+/* old code: 
   socket.on('join-room', (userBInput) => {
     console.log("This is user B id", socket.id)
     console.log(userBInput)
