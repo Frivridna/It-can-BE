@@ -69,10 +69,11 @@ io.on("connection", (socket) => {
       userAId = socket.id
       console.log("under 2 user")
     } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
-      console.log("Amount of Users in room right now", io.sockets.adapter.rooms.get(roomId).size)
+      console.log(`Amount of Users in room ${roomId} right now`, io.sockets.adapter.rooms.get(roomId).size)
       userBId = socket.id
       // start session
       io.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+      //socket.to(userAId).emit("FromAPI", socket.id, 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
       // var sockets = io.sockets.sockets;
       // console.log(sockets)
         console.log(`Sending URL to user A: ${userAId}`)
