@@ -29,10 +29,6 @@ const setSecretCode = (length) => {
   return result
 }
 
-// let roleA = 'Role A'
-// let roleB = 'Role B'
-// let userRoleA
-// let userRoleB
 let userAId
 let userBId
 let secret
@@ -41,6 +37,14 @@ io.on("connection", (socket) => {
   console.log("I am connected", socket.id)
 
   socket.on('create', () => {
+    // new code
+    let secretCode = setSecretCode(4)
+    io.emit('sendCode', secretCode)
+    userAId = socket.id
+    console.log("User A joined with id", socket.id)
+    socket.join(secretCode)
+    console.log('room created')
+
     // old code
 /*     console.log("This is user A id", socket.id)
     console.log('room created')
@@ -52,17 +56,10 @@ io.on("connection", (socket) => {
     socket.on('userA', (arg => {
       userRoleA=arg
       console.log(roleA===userRoleA)
-  
     }))
-
- */    // new code
-    let secretCode = setSecretCode(4)
-    io.emit('sendCode', secretCode)
-    userAId = socket.id
-    console.log("User A joined with id", socket.id)
-    socket.join(secretCode)
-    console.log('room created')
+ */
   })
+
   // User B input 
   socket.on('join-room', (roomId) => {
     console.log(`User A id is still here? ${userAId}`)
@@ -70,19 +67,21 @@ io.on("connection", (socket) => {
     socket.join(roomId)
     if (io.sockets.adapter.rooms.get(roomId).size < 2) {
       userAId = socket.id
+      console.log("under 2 user")
     } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
       console.log("Amount of Users in room right now", io.sockets.adapter.rooms.get(roomId).size)
-      let userBId = socket.id
+      userBId = socket.id
       // start session
-      socket.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+      io.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+      // var sockets = io.sockets.sockets;
+      // console.log(sockets)
         console.log(`Sending URL to user A: ${userAId}`)
         console.log(`Sending URL to user B: ${userBId}`)
-      socket.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
+      io.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
       // emit to all connected users --> io.emit()
     //  io.emit('FromAPI','Foo')
-    //socket.to(userBId).emit('FromSecondAPI', 'hej hej')
     } else {
-      // room is full --> emit to global room that this room is already full.
+      // room is full --> emit to global room that this room is already full. 
     }
   })
 
@@ -133,11 +132,6 @@ io.on("connection", (socket) => {
     console.log('We have a click 1')
   })
 })
-
-// second file
-// https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3
-
-
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
