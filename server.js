@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     console.log("User A joined with id", socket.id)
     socket.join(secretCode)
     console.log('room created')
-
+    
     // old code
 /*     console.log("This is user A id", socket.id)
     console.log('room created')
@@ -59,9 +59,10 @@ io.on("connection", (socket) => {
     }))
  */
   })
-
+  io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
+  io.emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
   // User B input 
-  socket.on('join-room', (roomId) => {
+/*   socket.on('join-room', (roomId) => {
     console.log(`User A id is still here? ${userAId}`)
     console.log('User B joined with id: ', socket.id)
     socket.join(roomId)
@@ -84,7 +85,7 @@ io.on("connection", (socket) => {
     } else {
       // room is full --> emit to global room that this room is already full. 
     }
-  })
+  }) */
 
 /* old code: 
   socket.on('join-room', (userBInput) => {
