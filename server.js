@@ -19,7 +19,7 @@ const io = new Server(server, {
   }
 })
 
-// generateRoomId ? detta är inte secret - ingen kryptering t.ex. enligt en som jobbar med internetsäkerhet. Se över terminologin. 
+// Change name to generateRoomId ? this is NOT a secret - eg. no crypto according to person who works with internet security. Change how we name things :) 
 const setSecretCode = (length) => {
   const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
@@ -31,6 +31,7 @@ const setSecretCode = (length) => {
 
 let userAId
 let userBId
+let amountOfPerson
 let secret
 
 io.on("connection", (socket) => {
@@ -45,94 +46,37 @@ io.on("connection", (socket) => {
     socket.join(secretCode)
     console.log('room created')
     
-    // old code
-/*     console.log("This is user A id", socket.id)
-    console.log('room created')
-    let secretCode = setSecretCode(4)
-    let roleA = 'Role A'
-    io.emit('sendCode', secretCode, roleA)
-    socket.join(secretCode)
-    console.log("This is first user joining", io.sockets.adapter.rooms.get(secretCode).size)
-    socket.on('userA', (arg => {
-      userRoleA=arg
-      console.log(roleA===userRoleA)
-    }))
- */
   })
-  io.emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-  io.emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
   // User B input 
-/*   socket.on('join-room', (roomId) => {
+  socket.on('join-room', (roomId) => {
     console.log(`User A id is still here? ${userAId}`)
-    console.log('User B joined with id: ', socket.id)
+    console.log(`User B joined with id: , ${userBId}`)
     socket.join(roomId)
     if (io.sockets.adapter.rooms.get(roomId).size < 2) {
+      // use case: user A has closed down the browser, then user B will be assigned role A here: 
       userAId = socket.id
-      console.log("under 2 user")
     } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
       console.log(`Amount of Users in room ${roomId} right now`, io.sockets.adapter.rooms.get(roomId).size)
       userBId = socket.id
       // start session
       io.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-      //socket.to(userAId).emit("FromAPI", socket.id, 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
       // var sockets = io.sockets.sockets;
       // console.log(sockets)
         console.log(`Sending URL to user A: ${userAId}`)
         console.log(`Sending URL to user B: ${userBId}`)
       io.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
-      // emit to all connected users --> io.emit()
-    //  io.emit('FromAPI','Foo')
-    } else {
-      // room is full --> emit to global room that this room is already full. 
+    } else if (amountOfPerson = io.sockets.adapter.rooms.get(roomId).size >= 2) {
+      // room is full - there is no way to prevent more user's to join a room, but we can send this message to FE
+      //io.to(socketId).emit('status', "Hello! It's already ${amountOfPerson} persons in the room, please try again")
+      //io.emit('GlobalRoom', 'The room is already full')
     }
-  }) */
-
-/* old code: 
-  socket.on('join-room', (userBInput) => {
-    console.log("This is user B id", socket.id)
-    console.log(userBInput)
-    //let roleB = 'Role B'
-    socket.join(userBInput)
-    console.log("This is second user joining", io.sockets.adapter.rooms.get(userBInput).size)
-    socket.on('userB', (arg => {
-      userRoleB = arg
-      console.log(userRoleB)
-      console.log(roleB===userRoleB)
-    }))
- */
-    // CHANGE THIS: 
-    // 1) Plocka ut socket.id - HUR gör vi det?
-    // 2. Emit to only the socket id:s that is >= 2 and not to the room! 
-    // if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
-    //   // OLDER: Test för att se vad som händer när vi emittar gloabalt till alla användare A resp. B. (not emitting to a room)
-    //   if (roleA === userRoleA) {
-    //     console.log('User A')
-    //     // io.to(socketId).emit(/* ... */) ---> emit to specific user syntax. 
-    //     // socket.to("room1").emit(/* ... */) ---> emit to room syntax. 
-    //     socket.to(socket.id).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-    //     console.log('Sending URL to user A')
-    //   } else if (roleB === userRoleB) {
-    //     console.log('Sending URL to user B')
-    //     socket.to(userBInput).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
-    //   }
-
-    // SPARA DENNA LINE:  let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2
-
-      // hämta ut rätt socket.id till användare nummer >=2
-      //io.to(socketId).emit('status', "hej hej it's already ${amountOfPerson} persons in the room, please try again") 
-      
-      // console.log(`Amount of users in room ${roomId}`, io.sockets.adapter.rooms.get(roomId).size)
-      // io.emit('status:', 'The room is currently occupied') // lägg in i FE  // NOT HAPPENING **
-      // } else { // join-room
-      //   console.log('There are rooms still there to join for 1 user')
-      //   // What to do instead of console.log here? 
-      // }
-  //})   
-  socket.on('click', (click) => {
-    // io.to('some room').emit('some event')
-    //io.to(room+currentroom).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-    console.log('We have a click 1')
   })
+
+    // We can emit to the 3rd socket id that is trying to join a room: 
+    // 1) Pick out 3rd person's socket.id - HOW to do that? 
+    // 2.) Emit to only the socket id:s that is >= 2 and not to the room. 
+    // if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
+    // let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2  
 })
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
