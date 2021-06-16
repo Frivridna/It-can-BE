@@ -4,11 +4,14 @@ import cors from 'cors'
 import listEndpoints from 'express-list-endpoints'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
+import dotenv from 'dotenv'
 
 const http = require("http")
 const app = express()
 const server = http.createServer(app)
 const { Server } = require("socket.io")
+
+dotenv.config()
 
 const port = process.env.PORT || 4001
 
