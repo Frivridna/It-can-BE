@@ -19,64 +19,56 @@ const io = new Server(server, {
   }
 })
 
-// Change name to generateRoomId ? this is NOT a secret - eg. no crypto according to person who works with internet security. Change how we name things :) 
-const setSecretCode = (length) => {
-  const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let result = ''
-  for ( let i = 0; i < length; i++ ) {
-      result += randomChars.charAt(Math.floor(Math.random() * randomChars.length))
-  }
-  return result
-}
+const files = [
+  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3',
+  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
+]
 
-let userAId
-let userBId
-let amountOfPerson
-let secret
+io.on('connection', (socket) => {
 
-io.on("connection", (socket) => {
-  console.log("I am connected", socket.id)
+  // Print connected user id
+  console.log(`Connected: ${socket.id}`);
 
-  socket.on('create', () => {
-    // new code
-    let secretCode = setSecretCode(4)
-    io.emit('sendCode', secretCode)
-    userAId = socket.id
-    console.log("User A joined with id", socket.id)
-    socket.join(secretCode)
-    console.log('room created')
-    
+  // Print disconnected user id
+  socket.on('disconnect', () => {
+    console.log(`Disconnected: ${socket.id}`)
+  });
+
+  // Join room event
+  socket.on('join', (room) => {
+
+     // Join first person to room
+     if (!io.sockets.adapter.rooms.get(room)) {
+       console.log('First person', socket.id, room)
+       socket.join(room)
+
+     // Join second person to room
+     } else if (io.sockets.adapter.rooms.get(room) && io.sockets.adapter.rooms.get(room).size < 2) {
+       console.log('Second person', socket.id, room)
+       socket.join(room)
+
+     // Disallow more than 2 people in same room  
+     } else {
+       console.log('Full', socket.id)
+       io.emit('join', 'Room is full')
+     }
+
+     // Send files to users
+     if (io.sockets.adapter.rooms.get(room) && io.sockets.adapter.rooms.get(room).size === 2) {
+      
+      // Create array of user ids from users in room
+      const users = []
+      console.log(users.length)
+      io.emit('users', users.length) // NY
+      io.sockets.adapter.rooms.get(room).forEach(user => users.push(user))
+
+      // Send different files for each user
+      users.forEach((user, index) => {
+        io.sockets.sockets.get(user).emit('join', files[index])
+      //  console.log('Sending url to user a', `$files[index]`)
+      })
+     }
   })
-  // User B input 
-  socket.on('join-room', (roomId) => {
-    console.log(`User A id is still here? ${userAId}`)
-    console.log(`User B joined with id: , ${userBId}`)
-    socket.join(roomId)
-    if (io.sockets.adapter.rooms.get(roomId).size < 2) {
-      // use case: user A has closed down the browser, then user B will be assigned role A here: 
-      userAId = socket.id
-    } else if (io.sockets.adapter.rooms.get(roomId).size === 2) {
-      console.log(`Amount of Users in room ${roomId} right now`, io.sockets.adapter.rooms.get(roomId).size)
-      userBId = socket.id
-      // start session
-      io.to(userAId).emit('FromAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3')
-      // var sockets = io.sockets.sockets;
-      // console.log(sockets)
-        console.log(`Sending URL to user A: ${userAId}`)
-        console.log(`Sending URL to user B: ${userBId}`)
-      io.to(userBId).emit('FromSecondAPI', 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3')
-    } else if (amountOfPerson = io.sockets.adapter.rooms.get(roomId).size >= 2) {
-      // room is full - there is no way to prevent more user's to join a room, but we can send this message to FE
-      //io.to(socketId).emit('status', "Hello! It's already ${amountOfPerson} persons in the room, please try again")
-      //io.emit('GlobalRoom', 'The room is already full')
-    }
-  })
-
-    // We can emit to the 3rd socket id that is trying to join a room: 
-    // 1) Pick out 3rd person's socket.id - HOW to do that? 
-    // 2.) Emit to only the socket id:s that is >= 2 and not to the room. 
-    // if (io.sockets.adapter.rooms.get(userBInput).size >= 2) {
-    // let amountOfPerson = io.sockets.adapter.rooms.get(userBInput).size >= 2  
 })
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/sounds"
