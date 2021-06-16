@@ -5,3 +5,5 @@ This project includes the packages and babel setup for an express server, and is
 ## Getting started
 
 Install dependencies with `npm install`, then start the server by running `npm run dev`
+
+Link to deployed Backend: https://icslap-p.herokuapp.com/

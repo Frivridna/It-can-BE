@@ -113,8 +113,8 @@ const authenticateAdmin = async (req, res, next) => {
   }
 }
 
-// Remember to DELETE this endpoint after we have signed up ONCE, and have connected to MongoAtlas *** 
-app.post('/signup', async (req, res) => {
+// Remember to DELETE this endpoint after Franz have signed up too. 
+/* app.post('/signup', async (req, res) => {
   const { username, password } = req.body
 
   try {
@@ -137,7 +137,7 @@ app.post('/signup', async (req, res) => {
     }
     res.status(400).json({ success: false, message: 'Invalid Request', error })
   }
-})
+}) */
 
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body;
