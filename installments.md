@@ -47,11 +47,11 @@ description": "A file that goes to user 1",
 
 **## Ljudfiler**
 
-1) https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+1) https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3 // TO USE ! :) 
 
 2) https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3 (Olika)
 
-3) https://ia802508.us.archive.org/5/items/testmp3testfile/mpthreetest.mp3
+3) https://ia802508.us.archive.org/5/items/testmp3testfile/mpthreetest.mp3 // USED
 
 4) https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3 (Olika)
 
@@ -65,4 +65,4 @@ description": "A file that goes to user 1",
 
 9) https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Planetronik+rock.mp3
 
-10) https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/sound.mp3
+10) https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/sound.mp3 // USED
