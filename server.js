@@ -22,9 +22,12 @@ const io = new Server(server, {
   }
 })
 
+// https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3
+// https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3
 const files = [
-  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3',
-  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
+  'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
+  'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3'
+//  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
 ]
 
 io.on('connection', (socket) => {
@@ -189,7 +192,8 @@ app.get('/sounds', authenticateAdmin)
 app.get('/sounds', async (req,res) => {
   const allSounds = await Sound.find()
   res.json(allSounds)
-});
+  console.log(allSounds)
+})
 
 app.post('/sounds', authenticateAdmin)
 app.post('/sounds', async (req,res) => {
@@ -198,7 +202,7 @@ app.post('/sounds', async (req,res) => {
       name: req.body.name,
       url: req.body.url,
       description: req.body.description
-    }).save(); 
+    }).save()
     res.json(newSound);
   } catch (error) {
     if(error.code===11000){
