@@ -85,7 +85,7 @@ mongoose.Promise = Promise
 app.use(cors())
 app.use(express.json())
 
-// TODO: Add Caroline and Fethullah as admin
+// TODO: Add Franz som admin
 const Admin = mongoose.model('Admin', {
   username: {
     type: String, 
@@ -177,7 +177,12 @@ const urlSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: true
-  }
+  },
+/*   role: {
+    type: String, // dropdown i FE som bestämmer A B unused
+    enum:  ?? 
+    required: true
+  } */
 })
 
 const Sound = mongoose.model('Sound', urlSchema)
@@ -204,7 +209,8 @@ app.post('/sounds', async (req,res) => {
     const newSound = await new Sound({
       name: req.body.name,
       url: req.body.url,
-      description: req.body.description
+      description: req.body.description,
+    //  role: req.body.role //
     }).save()
     res.json({
       success: true,
