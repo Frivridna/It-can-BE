@@ -191,7 +191,10 @@ app.get('/', (req, res) => {
 app.get('/sounds', authenticateAdmin)
 app.get('/sounds', async (req,res) => {
   const allSounds = await Sound.find()
-  res.json(allSounds)
+  res.json({
+    success: true,
+    data: allSounds
+  }) 
   console.log(allSounds)
 })
 
@@ -203,12 +206,15 @@ app.post('/sounds', async (req,res) => {
       url: req.body.url,
       description: req.body.description
     }).save()
-    res.json(newSound);
+    res.json({
+      success: true,
+      data: newSound
+    })
   } catch (error) {
     if(error.code===11000){
-      res.status(400).json({ error: 'Duplicated value', field: error.keyValue })
+      res.status(400).json({ success: false, error: 'Duplicated value', field: error.keyValue })
     }
-    res.status(400).json(error)
+    res.status(400).json({success: false, error })
   }
 })
 
