@@ -22,7 +22,7 @@ const io = new Server(server, {
   }
 })
 
-// DEssa var inne i files 
+// DEssa var inne i files = []
 // ['https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
 // 'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3']
 // Ovanför
@@ -30,9 +30,10 @@ const io = new Server(server, {
 // 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
 // https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3
 // https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3
-const files = [
-  'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
-  'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3'
+
+let queriedPlay = [
+  //   'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
+  //  'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3'
 ]
 
 io.on('connection', (socket) => {
@@ -75,7 +76,8 @@ io.on('connection', (socket) => {
 
       // Send different files for each user
       users.forEach((user, index) => {
-        io.sockets.sockets.get(user).emit('join', files[index])
+//        io.sockets.sockets.get(user).emit('join', queriedPlay[index])
+          io.sockets.sockets.get(user).emit('join', index)
       //  console.log('Sending url to user a', `$files[index]`)
       })
      }
@@ -221,6 +223,19 @@ app.get('/sounds', async (req,res) => {
 
   files.push({data:allSounds})
 }) */
+
+
+app.get('/sounds/play/:user', async (req, res) => {
+  const { user } = req.params
+
+
+      const queriedPlay = await Sound.find()
+      res.json({
+        success: true,
+        data: queriedPlay[user]
+      })
+})
+
 
 // OVANFÖR
 
