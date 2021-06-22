@@ -22,11 +22,15 @@ const io = new Server(server, {
   }
 })
 
+// DEssa var inne i files 
+// ['https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
+// 'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3']
+// Ovanför
+
 // https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3
 // https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3
 const files = [
-  'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
-  'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3'
+
 //  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
 ]
 
@@ -117,7 +121,7 @@ const authenticateAdmin = async (req, res, next) => {
 }
 
 // Remember to DELETE this endpoint after Franz have signed up too. 
-/* app.post('/signup', async (req, res) => {
+app.post('/signup', async (req, res) => {
   const { username, password } = req.body
 
   try {
@@ -140,7 +144,7 @@ const authenticateAdmin = async (req, res, next) => {
     }
     res.status(400).json({ success: false, message: 'Invalid Request', error })
   }
-}) */
+})
 
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body;
@@ -181,7 +185,7 @@ const urlSchema = new mongoose.Schema({
   playable: { // LA TILL DENNA NU
     type: Boolean,
     default: false,
-    required: true
+    // required: true
   }
 })
 
@@ -202,6 +206,22 @@ app.get('/sounds', async (req,res) => {
   }) 
   console.log(allSounds)
 })
+
+// LA TILL DENNA NYSS 
+
+/* app.get('/sounds', async (req,res) => {
+  const allSounds = await Sound.find()
+  res.json({
+    success: true,
+    data: allSounds
+  }) 
+  console.log(allSounds)
+
+
+  files.push({data:allSounds})
+}) */
+
+// OVANFÖR
 
 app.post('/sounds', authenticateAdmin)
 app.post('/sounds', async (req,res) => {
