@@ -26,7 +26,7 @@ const io = new Server(server, {
 // https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3
 const files = [
   'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
-  'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3'
+  'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3'
 //  'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
 ]
 
@@ -178,11 +178,11 @@ const urlSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
-/*   role: {
-    type: String, // dropdown i FE som bestämmer A B unused
-    enum:  ?? 
+  playable: { // LA TILL DENNA NU
+    type: Boolean,
+    default: false,
     required: true
-  } */
+  }
 })
 
 const Sound = mongoose.model('Sound', urlSchema)
@@ -210,7 +210,7 @@ app.post('/sounds', async (req,res) => {
       name: req.body.name,
       url: req.body.url,
       description: req.body.description,
-    //  role: req.body.role //
+      playable: req.body.playable // LA TILL DENNA NU
     }).save()
     res.json({
       success: true,
