@@ -48,7 +48,18 @@ io.on('connection', (socket) => {
      // Disallow more than 2 people in same room  
      } else {
        console.log('Full', socket.id)
-       io.emit('join', 'Room is full')
+       //io.emit('fullRoom', 'Room is full') --> Going to be used in future
+
+       const users = []
+      //io.emit('users', users.length)
+      io.sockets.adapter.rooms.get(room).forEach(user => users.push(user))
+
+      // Emit room is full to 3rd user
+      users.forEach((user, index) => {
+          if (index === 2) {
+            io.sockets.sockets.get(user).emit('join', 'Room is full')
+          } 
+      })
      }
 
      // Send files to 2 users - starting here: 
