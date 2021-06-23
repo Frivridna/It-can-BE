@@ -22,29 +22,15 @@ const io = new Server(server, {
   }
 })
 
-// DEssa var inne i files = []
-// ['https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
-// 'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3']
-// Ovanför
-
-// 'https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/Franz+Edvard+Cedrins+-+ICSLP.mp3'
-// https://testfiles-caroline-fethullah.s3.eu-north-1.amazonaws.com/testuppladdning.mp3
-// https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3
-
-let queriedPlay = [
-  //   'https://dm0qx8t0i9gc9.cloudfront.net/watermarks/audio/S2O4GbbeUk52szlol/audioblocks-joyful-ride-20-seconds_HKQGTfonL_WM.mp3',
-  //  'https://static.taketones.com/storage/audio/8eefcfdf5990e441f0fb6f3fad709e21/i-stand-on-that-preview-full.mp3'
-]
-
 io.on('connection', (socket) => {
 
   // Print connected user id
-  console.log(`Connected: ${socket.id}`);
+  console.log(`Connected: ${socket.id}`)
 
   // Print disconnected user id
   socket.on('disconnect', () => {
     console.log(`Disconnected: ${socket.id}`)
-  });
+  })
 
   // Join room event
   socket.on('join', (room) => {
@@ -62,23 +48,21 @@ io.on('connection', (socket) => {
      // Disallow more than 2 people in same room  
      } else {
        console.log('Full', socket.id)
-        io.emit('join', 'Room is full')
+       io.emit('join', 'Room is full')
      }
 
-     // Send files to users
+     // Send files to 2 users - starting here: 
      if (io.sockets.adapter.rooms.get(room) && io.sockets.adapter.rooms.get(room).size === 2) {
       
       // Create array of user ids from users in room
       const users = []
-      console.log(users.length)
-      io.emit('users', users.length) // NY
+      io.emit('users', users.length)
       io.sockets.adapter.rooms.get(room).forEach(user => users.push(user))
 
       // Send different files for each user
       users.forEach((user, index) => {
-//        io.sockets.sockets.get(user).emit('join', queriedPlay[index])
+//        io.sockets.sockets.get(user).emit('join', queriedPlay[index]) --> Going to be used in future
           io.sockets.sockets.get(user).emit('join', index)
-      //  console.log('Sending url to user a', `$files[index]`)
       })
      }
   })
@@ -92,7 +76,6 @@ mongoose.Promise = Promise
 app.use(cors())
 app.use(express.json())
 
-// TODO: Add Franz som admin
 const Admin = mongoose.model('Admin', {
   username: {
     type: String, 
@@ -123,32 +106,6 @@ const authenticateAdmin = async (req, res, next) => {
   }
 }
 
-// Remember to DELETE this endpoint after Franz have signed up too. 
-app.post('/signup', async (req, res) => {
-  const { username, password } = req.body
-
-  try {
-    const salt = bcrypt.genSaltSync();
-    const newAdmin = await new Admin ({
-      username, 
-      password: bcrypt.hashSync(password, salt)
-    }).save();
-    if (newAdmin) {
-      res.json({
-        success: true,
-        userID: newAdmin._id,
-        username: newAdmin.username,
-        accessToken: newAdmin.accessToken
-      });
-    }
-  } catch(error) {
-    if(error.code===11000){
-      res.status(400).json({ success: false, error: 'Username already exists', field: error.keyValue })
-    }
-    res.status(400).json({ success: false, message: 'Invalid Request', error })
-  }
-})
-
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -168,7 +125,7 @@ app.post('/signin', async (req, res) => {
   }
 })
 
-// Add sound
+// urlSchema
 const urlSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -185,17 +142,15 @@ const urlSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
-  playable: { // LA TILL DENNA NU
+  playable: { 
     type: Boolean,
-    //default: false,
-    // required: true
   }
 })
 
 const Sound = mongoose.model('Sound', urlSchema)
 
 
-// Start defining routes
+// ROUTES
 app.get('/', (req, res) => {
   res.send(listEndpoints(app))
 })
@@ -210,34 +165,15 @@ app.get('/sounds', async (req,res) => {
   console.log(allSounds)
 })
 
-// LA TILL DENNA NYSS 
-
-/* app.get('/sounds', async (req,res) => {
-  const allSounds = await Sound.find()
-  res.json({
-    success: true,
-    data: allSounds
-  }) 
-  console.log(allSounds)
-
-
-  files.push({data:allSounds})
-}) */
-
-
 app.get('/sounds/play/:user', async (req, res) => {
   const { user } = req.params
-
-
-      const queriedPlay = await Sound.find()
-      res.json({
-        success: true,
-        data: queriedPlay[user]
-      })
+  
+  const queriedPlay = await Sound.find()
+    res.json({
+      success: true,
+      data: queriedPlay[user]
+    })
 })
-
-
-// OVANFÖR
 
 app.post('/sounds', authenticateAdmin)
 app.post('/sounds', async (req,res) => {
@@ -246,7 +182,7 @@ app.post('/sounds', async (req,res) => {
       name: req.body.name,
       url: req.body.url,
       description: req.body.description,
-      playable: req.body.playable // LA TILL DENNA NU
+      playable: req.body.playable
     }).save()
     res.json({
       success: true,
@@ -276,6 +212,7 @@ app.delete('/sounds/:id', async (req, res) => {
   }
 })
 
+// Going to be used in the future
 app.put('/sounds/:id', authenticateAdmin)
 app.put('/sounds/:id', async (req, res) => {
   const {id} = req.params
@@ -292,7 +229,7 @@ app.put('/sounds/:id', async (req, res) => {
   }
 })
 
-// Start the server
+// Start server
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`)
 })
