@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
      // Disallow more than 2 people in same room  
      } else {
        console.log('Full', socket.id)
-      //  io.emit('join', 'Room is full')
+        io.emit('join', 'Room is full')
      }
 
      // Send files to users
