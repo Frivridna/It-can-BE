@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
        socket.join(room)
 
      // Join second person to room
-     } else if (io.sockets.adapter.rooms.get(room) && io.sockets.adapter.rooms.get(room).size < 2) {
+     } else if (io.sockets.adapter.rooms.get(room) && io.sockets.adapter.rooms.get(room).size < 3) { // 2 
        console.log('Second person', socket.id, room)
        socket.join(room)
 
@@ -49,17 +49,18 @@ io.on('connection', (socket) => {
      } else {
        console.log('Full', socket.id)
        //io.emit('fullRoom', 'Room is full') --> Going to be used in future
+       //io.emit('join', 'Room is full', socket.id) --> Going to be used in future (this one emits to user 3)
 
        const users = []
       //io.emit('users', users.length)
       io.sockets.adapter.rooms.get(room).forEach(user => users.push(user))
 
       // Emit room is full to 3rd user
-      users.forEach((user, index) => {
+       users.forEach((user, index) => {
           if (index === 2) {
-            io.sockets.sockets.get(user).emit('join', 'Room is full')
+            io.sockets.sockets.get(user).emit('join', 'Room is full') // Check this in the future. Console.log not working inside here. 
           } 
-      })
+      }) 
      }
 
      // Send files to 2 users - starting here: 
